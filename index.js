@@ -2,12 +2,24 @@ let buttons = ["green", "red", "yellow", "blue"]
 let clicked = 0
 let level = 0
 let pattern = []
+let current_score = 0
 
 function gameOver() {
+  let highScore = localStorage.getItem('highScore')
+  if(!highScore){
+    localStorage.setItem('highScore', current_score)
+  }else{
+    if(current_score>highScore){
+      localStorage.setItem('highScore', current_score)
+    }
+  }
+  let score_title = "<h1 class='score-title'>" + "High Score: " + String(localStorage.getItem('highScore'))+ "</h1>"
   level = 0
   clicked = 0
   pattern = []
-  $("h1").text('GAME OVER. PRESS ANY KEY TO RESTART')
+  current_score = 0
+  $("h1[id='level-title']").text('GAME OVER. CLICK HERE TO RESTART')
+  $(score_title).insertAfter('.score-title')
   const audio = new Audio("sounds/wrong.mp3")
   $("body").addClass("game-over")
   setTimeout(function() {
@@ -21,7 +33,7 @@ function buttonFunctionality(id) {
   $("#" + id).addClass("pressed");
   setTimeout(function() {
     $("#" + id).removeClass("pressed");
-  }, 250);
+  }, 200);
   audio.play()
 }
 
@@ -34,17 +46,24 @@ function randomClick() {
 
 function updateLevel() {
   level = level + 1
-  $("h1").text('Level ' + String(level))
+  $("h1[id='level-title']").text('Level ' + String(level))
+  $("h1[class='score-title']").text("Current Score: " + String(current_score))
   clicked = 0
   setTimeout(function() {
     randomClick()
   }, 250)
 }
 
-$(document).on("keypress", function() {
+$("#level-title").on("click", function() {
+  if($('.score-title').length>0){
+    $('.score-title').remove();
+  }
   if (level === 0) {
+    let score_title = "<h1 class='score-title'></h1>"
+    $(score_title).insertAfter('#level-title')
     updateLevel()
   }
+
 })
 
 $("div[type = 'button']").click(function() {
@@ -60,6 +79,7 @@ $("div[type = 'button']").click(function() {
         clicked = clicked + 1
         if (clicked === level) {
           console.log('calling level update')
+          current_score++
           updateLevel()
         }
       } else {
