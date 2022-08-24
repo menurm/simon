@@ -55,10 +55,10 @@ function updateLevel() {
 }
 
 $("#level-title").on("click", function() {
-  if($('.score-title').length>0){
-    $('.score-title').remove();
-  }
   if (level === 0) {
+    if($('.score-title').length>0){
+      $('.score-title').remove();
+    }
     let score_title = "<h1 class='score-title'></h1>"
     $(score_title).insertAfter('#level-title')
     updateLevel()
@@ -87,4 +87,9 @@ $("div[type = 'button']").click(function() {
       }
     }
   }
+})
+$('#instruction-tog').text('Close')
+$("#instruction-tog").click(function(e){
+  $(this).text($(this).text() == 'Close'? "Instructions" : "Close")
+  $("#instruction").slideToggle();
 })
